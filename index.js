@@ -16,8 +16,6 @@ const loadContent = () => {
   let data = [];
 
   config.subdirectories.forEach( (s, sIdx) => {
-    console.log("**", s);
-
     const fileNames = fs.readdirSync(config.root + s);
     fileNames.forEach( f => {
       data.push(processRawFile(fs.readFileSync(config.root + s + "/" + f).toString(), s, sIdx));
@@ -42,8 +40,6 @@ const processRawFile = (content, sectionName, sectionIdx )=> {
   const cleanedBody = body.replace("{% include toc.html %}", "");
   const html = marked.parse(cleanedBody);
 
-  //console.log(html);
-
   return {
     sectionIdx,
     sectionName,
@@ -52,59 +48,24 @@ const processRawFile = (content, sectionName, sectionIdx )=> {
   }
 };
 
-// const convertToEpub = (data, outputFilename) => {
-//   const options = {
-//     title: "Elixir School",
-//     author: "Sean Callan",
-//     css,
-//     content: data.map(d => ({
-//       title: d.attributes.title,
-//       data: d.html
-//     }))
-//   };
-//
-//   new Epub(options, outputFilename).promise.then(
-//     () => console.log("Elixir School epub Generated Successfully"),
-//     err => console.error("Failed:", err)
-//   );
-// };
-//
-// if (!fs.existsSync(config.output)) fs.mkdirSync(config.output);
-// const data = loadContent();
-// convertToEpub(data, config.output + "/elixir-school.epub");
-
-
-const convertToHTML = (data, outputFilename) => {
+const convertToEpub = (data, outputFilename) => {
   const options = {
     title: "Elixir School",
     author: "Sean Callan",
     css,
     content: data.map(d => ({
       title: d.attributes.title,
-      data: d.html
+      data: d.html,
+      rawData: d.html
     }))
   };
-  let content = "";
-  data.forEach(d => {
-    content += "\n";
-    content += d.html;
-  });
-  const file = `
-<html>
-  <head>
-    <style>
-        ${css}
-    </style>
-  </head>
-  <body>
-    ${content}
-  </body>
-</html>
-`;
 
-fs.writeFileSync(outputFilename, file);
+  new Epub(options, outputFilename).promise.then(
+    () => console.log("Elixir School epub Generated Successfully"),
+    err => console.error("Failed:", err)
+  );
 };
 
 if (!fs.existsSync(config.output)) fs.mkdirSync(config.output);
 const data = loadContent();
-convertToHTML(data, config.output + "/elixir-school.html");
+convertToEpub(data, config.output + "/elixir-school.epub");

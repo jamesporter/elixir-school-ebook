@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/jamesporter/elixir-school-ebook#readme",
   "dependencies": {
-    "epub-gen": "0.0.17",
+    "epub-gen": "git+ssh://git@github.com/jamesporter/epub-gen.git",
     "front-matter": "^2.1.2",
     "highlightjs": "^9.10.0",
     "marked": "^0.3.6"
