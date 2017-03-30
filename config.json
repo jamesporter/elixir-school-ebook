@@ -1,0 +1,4 @@
+{
+  "root": "elixir-school/lessons",
+  "output": "dist"
+}

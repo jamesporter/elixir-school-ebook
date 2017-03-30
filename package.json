@@ -4,7 +4,7 @@
   "description": "Make an ebook version of Elixir School",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "epub": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/jamesporter/elixir-school-ebook/issues"
   },
-  "homepage": "https://github.com/jamesporter/elixir-school-ebook#readme"
+  "homepage": "https://github.com/jamesporter/elixir-school-ebook#readme",
+  "dependencies": {
+    "epub-gen": "0.0.17",
+    "front-matter": "^2.1.2",
+    "marked": "^0.3.6"
+  }
 }
