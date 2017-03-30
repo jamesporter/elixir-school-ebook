@@ -1,11 +1,15 @@
 const frontMatter = require("front-matter"),
   marked = require("marked"),
   Epub = require("epub-gen"),
+  highlight = require("highlightjs"),
   fs = require("fs");
 
 const config = JSON.parse(fs.readFileSync('config.json'));
+const css = fs.readFileSync('code.css').toString();
 
-
+marked.setOptions({
+  highlight: code => highlight.highlightAuto(code).value
+});
 
 const loadContent = () => {
 
@@ -36,32 +40,71 @@ const processRawFile = (content, sectionName, sectionIdx )=> {
   const {body, attributes} = frontMatter(content);
   //one slightly ugly hack to get rid of jekyll toc include
   const cleanedBody = body.replace("{% include toc.html %}", "");
+  const html = marked.parse(cleanedBody);
+
+  //console.log(html);
 
   return {
     sectionIdx,
     sectionName,
     attributes,
-    html: marked.parse(cleanedBody)
+    html
   }
 };
 
-const convertToEpub = (data, outputFilename) => {
+// const convertToEpub = (data, outputFilename) => {
+//   const options = {
+//     title: "Elixir School",
+//     author: "Sean Callan",
+//     css,
+//     content: data.map(d => ({
+//       title: d.attributes.title,
+//       data: d.html
+//     }))
+//   };
+//
+//   new Epub(options, outputFilename).promise.then(
+//     () => console.log("Elixir School epub Generated Successfully"),
+//     err => console.error("Failed:", err)
+//   );
+// };
+//
+// if (!fs.existsSync(config.output)) fs.mkdirSync(config.output);
+// const data = loadContent();
+// convertToEpub(data, config.output + "/elixir-school.epub");
+
+
+const convertToHTML = (data, outputFilename) => {
   const options = {
     title: "Elixir School",
     author: "Sean Callan",
+    css,
     content: data.map(d => ({
       title: d.attributes.title,
-      author: "Sean Callan",
       data: d.html
     }))
   };
+  let content = "";
+  data.forEach(d => {
+    content += "\n";
+    content += d.html;
+  });
+  const file = `
+<html>
+  <head>
+    <style>
+        ${css}
+    </style>
+  </head>
+  <body>
+    ${content}
+  </body>
+</html>
+`;
 
-  new Epub(options, outputFilename).promise.then(
-    () => console.log("Elixir School epub Generated Successfully"),
-    err => console.error("Failed:", err)
-  );
+fs.writeFileSync(outputFilename, file);
 };
 
 if (!fs.existsSync(config.output)) fs.mkdirSync(config.output);
 const data = loadContent();
-convertToEpub(data, config.output + "/elixir-school.epub");
+convertToHTML(data, config.output + "/elixir-school.html");
