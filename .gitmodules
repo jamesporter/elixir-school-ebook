@@ -1,0 +1,3 @@
+[submodule "elixir-school"]
+	path = elixir-school
+	url = git@github.com:doomspork/elixir-school.git
