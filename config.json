@@ -1,7 +1,10 @@
 {
-  "root": "elixir-school/lessons/",
+  "root": "elixir-school/en/lessons/",
   "output": "dist",
   "subdirectories": [
-    "basics", "advanced", "specifics", "libraries"
+    "basics",
+    "advanced",
+    "specifics",
+    "libraries"
   ]
 }
