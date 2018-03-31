@@ -16,6 +16,7 @@ const loadContent = () => {
   let data = [];
 
   config.subdirectories.forEach( (s, sIdx) => {
+    if (!fs.existsSync(config.root + s)) return;
     const fileNames = fs.readdirSync(config.root + s);
     fileNames.forEach( f => {
       data.push(processRawFile(fs.readFileSync(config.root + s + "/" + f).toString(), s, sIdx));
