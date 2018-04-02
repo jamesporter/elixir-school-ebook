@@ -1,5 +1,6 @@
 {
-  "root": "elixir-school/en/lessons/",
+  "root": "elixir-school/",
+  "language": "en",
   "output": "dist",
   "subdirectories": [
     "basics",
