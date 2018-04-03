@@ -2,10 +2,19 @@ const frontMatter = require("front-matter"),
   marked = require("marked"),
   Epub = require("epub-gen"),
   highlight = require("highlightjs"),
-  fs = require("fs");
+  fs = require("fs"),
+  commander = require("commander"),
+  path = require("path");
 
 const config = JSON.parse(fs.readFileSync('config.json'));
 const css = fs.readFileSync('code.css').toString();
+
+commander
+  .option('-l, --language <language_code>', 'Set language code', config.language)
+  .option('-r, --root <directory_path>', 'Set root directory path', config.root)
+  .parse(process.argv);
+const languageCode = commander.language;
+const rootDirectoryPath = commander.root;
 
 marked.setOptions({
   highlight: code => highlight.highlightAuto(code).value
@@ -15,10 +24,13 @@ const loadContent = () => {
 
   let data = [];
 
+  const lessonsDirectoryPath = path.join(rootDirectoryPath, languageCode, "lessons");
   config.subdirectories.forEach( (s, sIdx) => {
-    const fileNames = fs.readdirSync(config.root + s);
+    const subdirectoryPath = path.join(lessonsDirectoryPath, s);
+    if (!fs.existsSync(subdirectoryPath)) return;
+    const fileNames = fs.readdirSync(subdirectoryPath);
     fileNames.forEach( f => {
-      data.push(processRawFile(fs.readFileSync(config.root + s + "/" + f).toString(), s, sIdx));
+      data.push(processRawFile(fs.readFileSync(path.join(subdirectoryPath, f)).toString(), s, sIdx));
     })
   });
 
@@ -68,4 +80,4 @@ const convertToEpub = (data, outputFilename) => {
 
 if (!fs.existsSync(config.output)) fs.mkdirSync(config.output);
 const data = loadContent();
-convertToEpub(data, config.output + "/elixir-school.epub");
+convertToEpub(data, path.join(config.output, "elixir-school_" + languageCode + ".epub"));
